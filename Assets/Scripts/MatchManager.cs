@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MatchManager : MonoBehaviour
 {
+    public GameObject aimIcon;
     public GameObject player;
     [SerializeField] bool ended;
     // Start is called before the first frame update

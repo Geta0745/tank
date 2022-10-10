@@ -9,7 +9,8 @@ public class PlayerFireController : MonoBehaviour
     Camera cam;
     PlayerMainTurret maingun;
     PlayerControl PlayerControls;
-    [SerializeField] LayerMask aimMask;
+    public LayerMask aimMask;
+    public LayerMask muzzleMask;
     public Vector3 aimPoint;
     public bool AimMode = false;
     private InputAction look;
@@ -49,7 +50,6 @@ public class PlayerFireController : MonoBehaviour
     }
 
     private void OnDisable() {
-        look.Disable();
         fire.Disable();
         zoom.Disable();
     }
@@ -61,7 +61,6 @@ public class PlayerFireController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit,500f,aimMask))
         {
-            Debug.DrawLine(ray.origin, hit.point);
             aimPoint = hit.point;
         }
 

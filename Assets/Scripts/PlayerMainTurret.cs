@@ -10,6 +10,7 @@ public class PlayerMainTurret : MonoBehaviour
     //public Transform gunMount;
     [SerializeField] float turretTurnSpeed = .5f;
     PlayerFireController aimStatus;
+    AimPointSystem aimUI;
 
     //FIre
     public Rigidbody bullet;
@@ -23,12 +24,15 @@ public class PlayerMainTurret : MonoBehaviour
     void Start()
     {
         aimStatus = gameObject.GetComponent<PlayerFireController>();
+        aimUI = GameObject.FindObjectOfType<AimPointSystem>().GetComponent<AimPointSystem>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         rotateTurret();
+        aimUI.UpdatePoint(aimStatus.aimPoint);
+        aimUI.DrawPointLine(turret,firePoint,aimStatus.aimPoint,aimStatus.muzzleMask);
         if(countdownBeforeShot < reloadTime){
             countdownBeforeShot = Mathf.Clamp(countdownBeforeShot+Time.deltaTime,0,reloadTime);
         }else{
@@ -37,11 +41,11 @@ public class PlayerMainTurret : MonoBehaviour
     }
 
     public void FireMainGun(){
-        Debug.Log("Fire");
         if(readyToFire && bullet != null){
             readyToFire = false;
             countdownBeforeShot = 0f;
             Rigidbody rb = Instantiate(bullet.gameObject,firePoint.position,Quaternion.identity).GetComponent<Rigidbody>();
+            Physics.IgnoreCollision(rb.gameObject.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
             rb.AddForce(firePoint.transform.forward * pushForce);
         }
     }
