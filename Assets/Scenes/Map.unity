@@ -654,7 +654,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321434966}
-  m_LocalRotation: {x: 0.000000041586606, y: 0.7800419, z: -0.62572736, w: 0.000000051842534}
+  m_LocalRotation: {x: 0.000000041583593, y: 0.7800419, z: -0.62572736, w: 0.00000005183878}
   m_LocalPosition: {x: 3.557698, y: 45, z: 11.561317}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1807,7 +1807,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649228218}
-  m_LocalRotation: {x: 0.000000041586606, y: 0.7800419, z: -0.62572736, w: 0.000000051842534}
+  m_LocalRotation: {x: 0.000000041583593, y: 0.7800419, z: -0.62572736, w: 0.00000005183878}
   m_LocalPosition: {x: 3.557698, y: 19.523745, z: 5.899926}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3014,13 +3014,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06ad173bded12854e9e41b577fde6f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tankRigidbody: {fileID: 919132147907668693}
-  maxSpeed: 10
-  maxReverseSpeed: -5
-  bakeForce: 0.2
-  currentSpeed: 0
-  accelerate: 0.01
-  turnSpeed: 120
+  rb: {fileID: 0}
+  maxSpeed: 15
+  maxReverseSpeed: 8
+  accelerate: 5
+  turnSpeed: 70
+  currentTurnSpeed: 0
   movement: {x: 0, y: 0}
 --- !u!54 &919132147907668693
 Rigidbody:
@@ -3036,7 +3035,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!65 &919132147907668694
 BoxCollider:
