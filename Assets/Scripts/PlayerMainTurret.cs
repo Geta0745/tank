@@ -32,7 +32,7 @@ public class PlayerMainTurret : MonoBehaviour
     {
         rotateTurret();
         aimUI.UpdatePoint(aimStatus.aimPoint);
-        aimUI.DrawPointLine(turret,firePoint,aimStatus.aimPoint,aimStatus.muzzleMask);
+        aimUI.DrawPointLine(firePoint,aimStatus.aimPoint,aimStatus.muzzleMask);
         if(countdownBeforeShot < reloadTime){
             countdownBeforeShot = Mathf.Clamp(countdownBeforeShot+Time.deltaTime,0,reloadTime);
         }else{
