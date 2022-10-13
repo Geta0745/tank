@@ -51,10 +51,10 @@ public class PlayerMovement : MonoBehaviour
 
     void CalSpeed(){
         if(movement.y > 0f && rb.velocity.magnitude < maxSpeed){
-            Debug.Log("forward");
+            //Debug.Log("forward");
             rb.AddForce(rb.transform.forward * accelerate);
         }else if(movement.y < 0f && rb.velocity.magnitude < maxReverseSpeed){
-            Debug.Log("backward");
+            //Debug.Log("backward");
             rb.AddForce(-rb.transform.forward * accelerate);
         }
     }

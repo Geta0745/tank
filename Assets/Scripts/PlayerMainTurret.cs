@@ -27,12 +27,21 @@ public class PlayerMainTurret : MonoBehaviour
         aimUI = GameObject.FindObjectOfType<AimPointSystem>().GetComponent<AimPointSystem>();
     }
 
+    private void Update() {
+        if(aimUI != null){
+            aimUI.DrawPointLine(firePoint,aimStatus.aimPoint,aimStatus.muzzleMask);
+        }
+        
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
+        if(aimUI != null){
+            aimUI.UpdatePoint(aimStatus.aimPoint);
+        }
+        
         rotateTurret();
-        aimUI.UpdatePoint(aimStatus.aimPoint);
-        aimUI.DrawPointLine(firePoint,aimStatus.aimPoint,aimStatus.muzzleMask);
         if(countdownBeforeShot < reloadTime){
             countdownBeforeShot = Mathf.Clamp(countdownBeforeShot+Time.deltaTime,0,reloadTime);
         }else{
@@ -53,6 +62,12 @@ public class PlayerMainTurret : MonoBehaviour
         Vector3 direction = aimStatus.aimPoint - turret.position;
         direction = Vector3.ProjectOnPlane(direction, transform.up);
         turret.rotation = Quaternion.Lerp(turret.rotation,Quaternion.LookRotation(direction, transform.up),turretTurnSpeed * Time.deltaTime);
+    }
+
+    private void OnDisable() {
+        if(aimUI != null){
+            aimUI.BackToZeroPoint();
+        }
     }
 
 }

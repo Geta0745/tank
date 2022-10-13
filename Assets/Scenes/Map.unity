@@ -654,7 +654,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321434966}
-  m_LocalRotation: {x: 0.000000001892385, y: 0.7800419, z: -0.6257274, w: 0.000000002359086}
+  m_LocalRotation: {x: 0.000000041586606, y: 0.7800419, z: -0.62572736, w: 0.000000051842534}
   m_LocalPosition: {x: 3.557698, y: 45, z: 11.561317}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -983,12 +983,6 @@ MonoBehaviour:
   player: {fileID: 919132147907668695}
   lrMuzzleError: {fileID: 1042940172}
   lrMuzzle: {fileID: 1829001747}
-  aimMask:
-    serializedVersion: 2
-    m_Bits: 8
-  gunAim:
-    serializedVersion: 2
-    m_Bits: 392
 --- !u!4 &753319539
 Transform:
   m_ObjectHideFlags: 0
@@ -1662,8 +1656,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649228218}
-  m_LocalRotation: {x: 0.000000001892385, y: 0.7800419, z: -0.6257274, w: 0.000000002359086}
-  m_LocalPosition: {x: 3.557698, y: 45, z: 11.561317}
+  m_LocalRotation: {x: 0.000000041586606, y: 0.7800419, z: -0.62572736, w: 0.000000051842534}
+  m_LocalPosition: {x: 3.557698, y: 19.523745, z: 5.899926}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2728,10 +2722,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  maxSpeed: 15
-  maxReverseSpeed: 8
+  maxSpeed: 12
+  maxReverseSpeed: 6
   accelerate: 5
-  turnSpeed: 70
+  turnSpeed: 120
   currentTurnSpeed: 0
   movement: {x: 0, y: 0}
 --- !u!54 &919132147907668693
@@ -6230,7 +6224,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &5411530751214056813
 MonoBehaviour:
   m_ObjectHideFlags: 0
