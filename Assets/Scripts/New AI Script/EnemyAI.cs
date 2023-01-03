@@ -9,6 +9,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] MovementSystem movementMaster;
     [SerializeField] TurretSystem turretMaster;
     private Seeker seeker;
+    public float calPathRate = 2f;
+    [SerializeField] float currentTime = 0f;
 
     public Path path;
 
@@ -17,14 +19,15 @@ public class EnemyAI : MonoBehaviour
     private int currentWaypoint = 0;
 
     public bool reachedEndOfPath;
-
+    Vector3 currentNodePos;
+    //random part
+    GraphNode randomNode;
+    public bool randomPath;
     public void Start () {
         seeker = GetComponent<Seeker>();
-
+        currentTime = calPathRate;
         movementMaster = GetComponent<MovementSystem>();
-        // Start a new path to the targetPosition, call the the OnPathComplete function
-        // when the path has been calculated (which may take a few frames depending on the complexity)
-        seeker.StartPath(transform.position, targetPosition.position, OnPathComplete);
+        seeker.StartPath(transform.position, RandomPath(), OnPathComplete);
     }
 
     public void OnPathComplete (Path p) {
@@ -37,12 +40,29 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    Vector3 RandomPath(){
+        var grid = AstarPath.active.data.gridGraph;
+
+        randomNode = grid.nodes[Random.Range(0, grid.nodes.Length)];
+        return (Vector3)randomNode.position;
+    }
+
     public void Update () {
         if (path == null) {
             // We have no path to follow yet, so don't do anything
             return;
         }
-        seeker.StartPath(transform.position, targetPosition.position, OnPathComplete);
+        if(currentTime <= 0f){
+            if(!randomPath){
+                seeker.StartPath(transform.position, targetPosition.position, OnPathComplete);
+            }else{
+                seeker.StartPath(transform.position, RandomPath(), OnPathComplete);
+            }
+            currentTime = calPathRate;
+        }else{
+            currentTime -= Time.deltaTime;
+        }
+        
         // Check in a loop if we are close enough to the current waypoint to switch to the next one.
         // We do this in a loop because many waypoints might be close to each other and we may reach
         // several of them in the same frame.
@@ -71,7 +91,7 @@ public class EnemyAI : MonoBehaviour
         // Slow down smoothly upon approaching the end of the path
         // This value will smoothly go from 1 to 0 as the agent approaches the last waypoint in the path.
         var speedFactor = reachedEndOfPath ? Mathf.Sqrt(distanceToWaypoint/nextWaypointDistance) : 1f;
-
+        currentNodePos = path.vectorPath[currentWaypoint];
         // Direction to the next waypoint
         // Normalize it so that it has a length of 1 world unit
         Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
@@ -81,8 +101,12 @@ public class EnemyAI : MonoBehaviour
         // Move the agent using the CharacterController component
         // Note that SimpleMove takes a velocity in meters/second, so we should not multiply by Time.deltaTime
         movementMaster.SetMovement(new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1)));
-        Debug.Log(new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1)));
+        
         // If you are writing a 2D game you should remove the CharacterController code above and instead move the transform directly by uncommenting the next line
         // transform.position += velocity * Time.deltaTime;
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.DrawLine(transform.position,currentNodePos);
     }
 }
