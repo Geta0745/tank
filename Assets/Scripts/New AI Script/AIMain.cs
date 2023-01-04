@@ -117,7 +117,7 @@ public class AIMain : MonoBehaviour
         }else{
             return new Vector2(Mathf.Clamp(prodMovement.x,-1,1),0f);
         }
-        return Vector2.zero;
+        //return Vector2.zero;
     }
      void OnDrawGizmos()
     {
