@@ -3,16 +3,18 @@ using Pathfinding;
 
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(MovementSystem))]
+[RequireComponent(typeof(SimpleSmoothModifier))]
 public class EnemyAI : MonoBehaviour
 {
     public Transform targetPosition;
     [SerializeField] MovementSystem movementMaster;
     [SerializeField] TurretSystem turretMaster;
     private Seeker seeker;
-    public float calPathRate = 2f;
+    public float calPathRate = 20f;
     [SerializeField] float currentTime = 0f;
 
     public Path path;
+    public Vector2 movement;
 
     public float nextWaypointDistance = 3;
 
@@ -21,17 +23,16 @@ public class EnemyAI : MonoBehaviour
     public bool reachedEndOfPath;
     Vector3 currentNodePos;
     //random part
-    GraphNode randomNode;
+    [SerializeField] GraphNode randomNode;
     public bool randomPath;
     public void Start () {
         seeker = GetComponent<Seeker>();
         currentTime = calPathRate;
         movementMaster = GetComponent<MovementSystem>();
-        seeker.StartPath(transform.position, RandomPath(), OnPathComplete);
     }
 
     public void OnPathComplete (Path p) {
-        //Debug.Log("A path was calculated. Did it fail with an error? " + p.error);
+        Debug.Log("A path was calculated. Did it fail with an error? " + p.errorLog);
 
         if (!p.error) {
             path = p;
@@ -48,10 +49,6 @@ public class EnemyAI : MonoBehaviour
     }
 
     public void Update () {
-        if (path == null) {
-            // We have no path to follow yet, so don't do anything
-            return;
-        }
         if(currentTime <= 0f){
             if(!randomPath){
                 seeker.StartPath(transform.position, targetPosition.position, OnPathComplete);
@@ -62,7 +59,10 @@ public class EnemyAI : MonoBehaviour
         }else{
             currentTime -= Time.deltaTime;
         }
-        
+        if (path == null) {
+            // We have no path to follow yet, so don't do anything
+            return;
+        }
         // Check in a loop if we are close enough to the current waypoint to switch to the next one.
         // We do this in a loop because many waypoints might be close to each other and we may reach
         // several of them in the same frame.
@@ -98,9 +98,11 @@ public class EnemyAI : MonoBehaviour
         // Multiply the direction by our desired speed to get a velocity
         float dotProdRear = Vector3.Dot(transform.right, path.vectorPath[currentWaypoint] - transform.position);
         float dotProdFront = Vector3.Dot(transform.forward, path.vectorPath[currentWaypoint] - transform.position);
+        movement = new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1));
+        
         // Move the agent using the CharacterController component
         // Note that SimpleMove takes a velocity in meters/second, so we should not multiply by Time.deltaTime
-        movementMaster.SetMovement(new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1)));
+        movementMaster.SetMovement(movement);
         
         // If you are writing a 2D game you should remove the CharacterController code above and instead move the transform directly by uncommenting the next line
         // transform.position += velocity * Time.deltaTime;
