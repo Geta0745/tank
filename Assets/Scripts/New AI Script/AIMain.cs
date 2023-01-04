@@ -10,55 +10,45 @@ public class AIMain : MonoBehaviour
     public Transform target;
     private NavMeshPath path;
     public Vector2 movement;
-    public float nextWaypointDistance = 4f;
-    [SerializeField] private int currentNode = 0;
-
+    [SerializeField] float nextWaypointDistance = 4f;
+    private int currentNode = 0;
+    [SerializeField] float calPathRate = 10f;
     private void Start() {
         path = new NavMeshPath();
         movementMaster = GetComponent<MovementSystem>();
-        //InvokeRepeating("CalculatePath",0f,calPathRate);
+        InvokeRepeating("CalculatePath",0f,calPathRate);
     }
     void Update()
     {
-        CalculatePath();
-        if(path.status == NavMeshPathStatus.PathComplete){
-            UpdatePath();
-        }
-        //Debug.Log(path.status);
-    }
-    
-    void UpdatePath(){
         if (currentNode < path.corners.Length)
         {
             Vector3 targetPos = path.corners[currentNode];
             Vector3 direction = targetPos - transform.position;
-            //Debug.Log(new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1)));
+            float dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
+            float dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
+            Debug.Log(new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1)));
+            movement = new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1));
+            movementMaster.SetMovement(movement);
             if (Vector3.Distance(transform.position, targetPos) < nextWaypointDistance)
             {
                 currentNode++;
             }
-            movementMaster.SetMovement(CalculateMovement());
-            DrawPathLine();
+        }else{
+            movement = Vector2.zero;
+            movementMaster.SetMovement(movement);
         }
-    }
 
-    Vector2 CalculateMovement(){
-        float dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
-        float dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
-        movement = new Vector2(Mathf.Clamp(dotProdRear,-1,1),Mathf.Clamp(dotProdFront,-1,1));
-        return movement;
-    }
-
-    void DrawPathLine(){
         for (int i = 0; i < path.corners.Length - 1; i++)
         {
-            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.green);
+            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);
         }
     }
 
     void CalculatePath()
     {
-        NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
-        Debug.LogWarning("Length : " + path.corners.Length);
+        if(target != null){
+            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
+            Debug.LogWarning(path.corners.Length);
+        }
     }
 }
