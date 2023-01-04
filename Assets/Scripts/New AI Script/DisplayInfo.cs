@@ -17,23 +17,24 @@ public class DisplayInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector2 movement = ai.GetMovement();
         string statusTurn = "None";
         string statusMove = "None";
-        speedText.text = "Move Factor : " + ai.movement.y.ToString() + " Turn Factor : " + ai.movement.x.ToString() +" ;";
+        speedText.text = "Move Factor : " + movement.y.ToString() + " Turn Factor : " + movement.x.ToString() +" ;";
 
-        if(ai.movement.x > 0.1f && ai.movement.x <= 0.8f){
+        if(movement.x > 0.1f && movement.x <= 0.8f){
             statusTurn = "Left Turn";
-        }else if(ai.movement.x < -0.1 && ai.movement.x > -0.8f){
+        }else if(movement.x < -0.1 && movement.x > -0.8f){
             statusTurn = "Right Turn";
-        }else if(ai.movement.x == 1){
+        }else if(movement.x == 1){
             statusTurn = "Full Left Turn";
-        }else if(ai.movement.x == -1f){
+        }else if(movement.x == -1f){
             statusTurn = "Full Right Turn";
         }
 
-        if(ai.movement.y > 0){
+        if(movement.y > 0){
             statusMove = "Forward";
-        }else if(ai.movement.y < 0){
+        }else if(movement.y < 0){
             statusMove = "Backward";
         }
 

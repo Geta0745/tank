@@ -47,4 +47,12 @@ public class MovementSystem : MonoBehaviour
         this.movement = movement;
     }
 
+    public Vector2 GetMovement(){
+        return movement;
+    }
+
+    public float GetCurrentSpeed(){
+        return currentSpeed;
+    }
+
 }
