@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(MovementSystem))]
+[RequireComponent(typeof(TurretSystem))]
+[RequireComponent(typeof(AISight))]
 public class AIMain : MonoBehaviour
 {
     [SerializeField] MovementSystem movementMaster;
-    [SerializeField] Transform target;
+    [SerializeField] TurretSystem turretMaster;
+    public Transform target;
     [SerializeField] Vector3 currentTagetNode;
     private NavMeshPath path;
     [SerializeField] Vector2 movement;
@@ -20,11 +23,13 @@ public class AIMain : MonoBehaviour
     [Header("Reach")][SerializeField] Vector2 possibleTurn = new Vector2(-3f, 3f);
     RaycastHit hitInfo;
     Rigidbody rb;
+    public bool targetTracked = false;
     private void Start()
     {
         path = new NavMeshPath();
         rb = GetComponent<Rigidbody>();
         movementMaster = GetComponent<MovementSystem>();
+        turretMaster = GetComponent<TurretSystem>();
         InvokeRepeating("CalculatePath", 0f, calPathRate);
     }
     void Update()
@@ -35,10 +40,20 @@ public class AIMain : MonoBehaviour
             Vector3 direction = currentTagetNode - transform.position;
             float dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
             float dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
-            //if(dotProdFront < 0 && Vector3.Distance(transform.position,path.corners[currentNode]))
-            movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
-            movement = AvoidanceObstacle();
-            movementMaster.SetMovement(movement);
+            if (!targetTracked)
+            {
+                movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
+                movement = AvoidanceObstacle();
+                movementMaster.SetMovement(movement);
+                turretMaster.SetTarget(path.corners[currentNode]);
+            }
+            else
+            {
+                movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
+                movementMaster.SetMovement(movement);
+                turretMaster.SetTarget(target.position);
+            }
+
             if (Vector3.Distance(transform.position, currentTagetNode) < nextWaypointDistance)
             {
                 currentNode++;
@@ -106,34 +121,8 @@ public class AIMain : MonoBehaviour
         if (hit)
         {
             Vector3 reflectedDirection = Vector3.Reflect(transform.forward, hitInfo.normal);
-            Vector2 movement = new Vector2(Mathf.Clamp(Vector2.Dot(-transform.right,path.corners[currentNode]),-1f,1f),Mathf.Clamp(Vector2.Dot(transform.forward,path.corners[currentNode]),-1,1f));
+            Vector2 movement = new Vector2(Mathf.Clamp(Vector2.Dot(-transform.right, path.corners[currentNode]), -1f, 1f), Mathf.Clamp(Vector2.Dot(transform.forward, path.corners[currentNode]), -1, 1f));
             return movement;
-            /*// Calculate the relative position and velocity between the object and the obstacle
-            Vector3 obstaclePosition = hitInfo.collider.transform.position;
-            Vector3 relativePosition = obstaclePosition - transform.position;
-            Vector3 relativeVelocity = Vector3.zero;
-            if(hitInfo.collider.GetComponent<Rigidbody>() != null){
-                relativeVelocity = hitInfo.collider.GetComponent<Rigidbody>().velocity - rb.velocity;
-            }
-
-            // Calculate the time it would take for the two objects to collide
-            float timeToCollision = -1 * Vector3.Dot(relativePosition, relativeVelocity) / relativeVelocity.sqrMagnitude;
-
-            // Calculate the avoidance force based on the distance and relative velocity
-            Vector3 avoidanceForce = relativePosition + (relativeVelocity * timeToCollision);
-
-            // Scale the force based on the distance to the obstacle
-            avoidanceForce = avoidanceForce.normalized * (1 / relativePosition.magnitude);
-
-            // Calculate the new movement direction based on the avoidance force
-            Vector3 newMovementDirection = movementDirection + avoidanceForce;
-
-            // Clamp the new movement direction to the valid range for the movement script
-            float x = Mathf.Clamp(newMovementDirection.x, -1f, 1f);
-            float y = Mathf.Clamp(newMovementDirection.y, -1f, 1f);
-
-            // Return the new movement direction as a Vector2
-            return new Vector2(x, y);*/
         }
         else
         {

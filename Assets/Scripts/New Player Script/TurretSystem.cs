@@ -55,4 +55,7 @@ public class TurretSystem : MonoBehaviour
         this.target = target;
     }
 
+    public void SetIdleTurret(){
+        target = muzzlePoint.position;
+    }
 }
