@@ -106,7 +106,7 @@ public class AIMain : MonoBehaviour
         if (hit)
         {
             Vector3 reflectedDirection = Vector3.Reflect(transform.forward, hitInfo.normal);
-            Vector2 movement = new Vector2(Mathf.Clamp(Vector2.Dot(transform.forward,path.corners[currentNode]),-1f,1f),Mathf.Clamp(Vector2.Dot(transform.right,path.corners[currentNode]),-1f,1f));
+            Vector2 movement = new Vector2(Mathf.Clamp(Vector2.Dot(-transform.right,path.corners[currentNode]),-1f,1f),Mathf.Clamp(Vector2.Dot(transform.forward,path.corners[currentNode]),-1,1f));
             return movement;
             /*// Calculate the relative position and velocity between the object and the obstacle
             Vector3 obstaclePosition = hitInfo.collider.transform.position;
