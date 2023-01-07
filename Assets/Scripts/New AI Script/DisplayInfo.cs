@@ -20,7 +20,7 @@ public class DisplayInfo : MonoBehaviour
         Vector2 movement = ai.GetMovement();
         string statusTurn = "None";
         string statusMove = "None";
-        speedText.text = "Move Factor : " + movement.y.ToString() + " Turn Factor : " + movement.x.ToString() +" ;";
+        speedText.text = "Move Factor : " + movement.y.ToString() + " Turn Factor : " + movement.x.ToString();
 
         if(movement.x > 0.1f && movement.x <= 0.8f){
             statusTurn = "Left Turn";
@@ -38,6 +38,6 @@ public class DisplayInfo : MonoBehaviour
             statusMove = "Backward";
         }
 
-        statusText.text = "Movement State : " + statusMove + " Turn State : " + statusTurn;
+        statusText.text = "Movement State : " + statusMove + " Turn State : " + statusTurn +" Obstacle Status : " + ai.CheckObstacle();
     }
 }

@@ -8,30 +8,38 @@ using UnityEngine.AI;
 [RequireComponent(typeof(AISight))]
 public class AIMain : MonoBehaviour
 {
-    [Header("Movement Controller Script")] [Tooltip("Movement Controller Script")][SerializeField] 
+    [Header("Movement Controller Script")]
+    [Tooltip("Movement Controller Script")]
+    [SerializeField]
     MovementSystem movementMaster;
-    [Tooltip("Turret Movement Controller Script")][SerializeField] 
+    [Tooltip("Turret Movement Controller Script")]
+    [SerializeField]
     TurretSystem turretMaster;
     public Transform target;
     private NavMeshPath path;
-    [Header("Calculate Path And Movement")][SerializeField] [Tooltip("Holder Calculated Movement Value")]
+    [Header("Calculate Path And Movement")]
+    [SerializeField]
+    [Tooltip("Holder Calculated Movement Value")]
     Vector2 movement;
-    [SerializeField] 
+    [SerializeField]
     float PicknextWaypointDistance = 4f;
     private int currentNode = 0;
-    [SerializeField] [Tooltip("Calculate Path Rate")]
+    [SerializeField]
+    [Tooltip("Calculate Path Rate")]
     float calPathRate = 10f;
 
     [Space]
-    [Header("Recalculate Movement to Avoid Obstacle")] 
+    [Header("Recalculate Movement to Avoid Obstacle")]
     public LayerMask obstacleMask;
     public bool targetTracked = false;
     [Tooltip("Size of Avoid Obstacle Zone")]
     public Vector3 boxcastHalfExtents = new Vector3(1.0f, 1.0f, 1.0f);
     public float AvoidDistance = 5.0f;
-    [SerializeField] [Tooltip("Possible Dot Prod Angle Turn")]
+    [SerializeField]
+    [Tooltip("Possible Dot Prod Angle Turn")]
     float possibleTurnProd = 3f;
-    
+    [SerializeField] float dotProdFront, dotProdRear;
+
     private void Start()
     {
         path = new NavMeshPath();
@@ -41,41 +49,48 @@ public class AIMain : MonoBehaviour
     }
     void Update()
     {
-        if (currentNode < path.corners.Length)
+        if (currentNode < path.corners.Length) //check if not reached destination
         {
-            Vector3 direction = path.corners[currentNode] - transform.position;
-            float dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
-            float dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
-            if (!targetTracked)
+            //check if have other unit block 
+            if (CheckObstacle())
+            {
+                dotProdFront = Vector3.Dot(transform.forward, ReflectedObstaclePosition() - transform.position);
+                dotProdRear = Vector3.Dot(transform.right, ReflectedObstaclePosition() - transform.position);
+            }
+            else
+            {
+                dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
+                dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
+            }
+
+            if (!targetTracked)//if target is not in sight
             {
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
-                movement = AvoidanceObstacle();
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(path.corners[currentNode]);
             }
-            else
+            else //target in sight
             {
                 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(target.position);
             }
 
-            if (Vector3.Distance(transform.position, path.corners[currentNode]) < PicknextWaypointDistance)
+            if (Vector3.Distance(transform.position, path.corners[currentNode]) < PicknextWaypointDistance)//pick next node
             {
                 currentNode++;
             }
         }
-        else
+        else //reached destination
         {
             movement = Vector2.zero;
             movementMaster.SetMovement(movement);
         }
 
-        for (int i = 0; i < path.corners.Length - 1; i++)
+        for (int i = 0; i < path.corners.Length - 1; i++)//draw line
         {
             Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);
         }
-        Debug.DrawLine(transform.position, transform.position + transform.forward * (AvoidDistance), Color.green);
     }
 
     void CalculatePath()
@@ -118,6 +133,24 @@ public class AIMain : MonoBehaviour
         return movement;
     }
 
+    public bool CheckObstacle()
+    {
+        return Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, Quaternion.identity, AvoidDistance, obstacleMask);
+    }
+
+    Vector3 ReflectedObstaclePosition()
+    {
+        RaycastHit hitInfo;
+        if (Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask))
+        {
+            Debug.DrawLine(hitInfo.normal, transform.position + Vector3.Reflect(transform.forward, hitInfo.normal), Color.green);
+            return Vector3.Reflect(transform.forward, hitInfo.normal);
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
     Vector2 AvoidanceObstacle()
     {
         RaycastHit hitInfo;
@@ -128,7 +161,7 @@ public class AIMain : MonoBehaviour
         if (hit)
         {
             Vector3 reflectedDirection = Vector3.Reflect(transform.forward, hitInfo.normal);
-            Vector2 movement = new Vector2(Mathf.Clamp(Vector2.Dot(-transform.right, path.corners[currentNode]), -1f, 1f), Mathf.Clamp(Vector2.Dot(transform.forward, path.corners[currentNode]), -1, 1f));
+            Vector2 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, path.corners[currentNode]), -1f, 1f), Mathf.Clamp(Vector3.Dot(transform.forward, path.corners[currentNode]), -1, 1f));
             return movement;
         }
         else
@@ -156,8 +189,6 @@ public class AIMain : MonoBehaviour
         RaycastHit hitInfo;
         bool hit = Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask);
 
-        // Draw the boxcast area
-        Gizmos.color = hit ? Color.red : Color.green;
         // Draw the boxcast area
         Gizmos.color = hit ? Color.red : Color.green;
         Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * AvoidDistance, transform.rotation, Vector3.one);
