@@ -8,26 +8,33 @@ using UnityEngine.AI;
 [RequireComponent(typeof(AISight))]
 public class AIMain : MonoBehaviour
 {
-    [SerializeField] MovementSystem movementMaster;
-    [SerializeField] TurretSystem turretMaster;
+    [Header("Movement Controller Script")] [Tooltip("Movement Controller Script")][SerializeField] 
+    MovementSystem movementMaster;
+    [Tooltip("Turret Movement Controller Script")][SerializeField] 
+    TurretSystem turretMaster;
     public Transform target;
-    [SerializeField] Vector3 currentTagetNode;
     private NavMeshPath path;
-    [SerializeField] Vector2 movement;
-    [SerializeField] float nextWaypointDistance = 4f;
+    [Header("Calculate Path And Movement")][SerializeField] [Tooltip("Holder Calculated Movement Value")]
+    Vector2 movement;
+    [SerializeField] 
+    float PicknextWaypointDistance = 4f;
     private int currentNode = 0;
-    [SerializeField] float calPathRate = 10f;
-    [Header("Avoid Obstacle")] public LayerMask obstacleMask;
+    [SerializeField] [Tooltip("Calculate Path Rate")]
+    float calPathRate = 10f;
+
+    [Space]
+    [Header("Recalculate Movement to Avoid Obstacle")] 
+    public LayerMask obstacleMask;
+    public bool targetTracked = false;
+    [Tooltip("Size of Avoid Obstacle Zone")]
     public Vector3 boxcastHalfExtents = new Vector3(1.0f, 1.0f, 1.0f);
     public float AvoidDistance = 5.0f;
-    [Header("Reach")][SerializeField] Vector2 possibleTurn = new Vector2(-3f, 3f);
-    RaycastHit hitInfo;
-    Rigidbody rb;
-    public bool targetTracked = false;
+    [SerializeField] [Tooltip("Possible Dot Prod Angle Turn")]
+    float possibleTurnProd = 3f;
+    
     private void Start()
     {
         path = new NavMeshPath();
-        rb = GetComponent<Rigidbody>();
         movementMaster = GetComponent<MovementSystem>();
         turretMaster = GetComponent<TurretSystem>();
         InvokeRepeating("CalculatePath", 0f, calPathRate);
@@ -36,8 +43,7 @@ public class AIMain : MonoBehaviour
     {
         if (currentNode < path.corners.Length)
         {
-            currentTagetNode = path.corners[currentNode];
-            Vector3 direction = currentTagetNode - transform.position;
+            Vector3 direction = path.corners[currentNode] - transform.position;
             float dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
             float dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
             if (!targetTracked)
@@ -54,7 +60,7 @@ public class AIMain : MonoBehaviour
                 turretMaster.SetTarget(target.position);
             }
 
-            if (Vector3.Distance(transform.position, currentTagetNode) < nextWaypointDistance)
+            if (Vector3.Distance(transform.position, path.corners[currentNode]) < PicknextWaypointDistance)
             {
                 currentNode++;
             }
@@ -89,7 +95,7 @@ public class AIMain : MonoBehaviour
     Vector3 RandomPositionOnNavmesh()
     {
         // Create a random position within the bounds of the navmesh
-        Vector3 randomPos = new Vector3(Random.Range(-50.0f, 50.0f), 0, Random.Range(-50.0f, 50.0f));
+        Vector3 randomPos = new Vector3(Random.Range(-200f, 200f), 0, Random.Range(-200f, 200f));
 
         // Create a NavMeshHit to store the result of the sampling
         NavMeshHit hit;
@@ -114,6 +120,7 @@ public class AIMain : MonoBehaviour
 
     Vector2 AvoidanceObstacle()
     {
+        RaycastHit hitInfo;
         // Perform the Boxcast to check for obstacles
         bool hit = Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask);
 
@@ -133,7 +140,7 @@ public class AIMain : MonoBehaviour
 
     Vector2 CalMoveDirection(Vector2 prodMovement)
     {
-        if ((prodMovement.x <= possibleTurn.y && prodMovement.x >= possibleTurn.x) && prodMovement.y > 0f)
+        if ((prodMovement.x <= possibleTurnProd && prodMovement.x >= -possibleTurnProd) && prodMovement.y > 0f)
         { //normal turn
             return new Vector2(Mathf.Clamp(prodMovement.x, -1, 1), Mathf.Clamp(prodMovement.y, -1, 1));
         }

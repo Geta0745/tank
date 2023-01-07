@@ -1241,8 +1241,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 916529585}
-  m_LocalRotation: {x: 0.30621284, y: -0.6373647, z: 0.30621284, w: 0.6373647}
-  m_LocalPosition: {x: 83.643326, y: 34.395, z: -43.589993}
+  m_LocalRotation: {x: 0.43305045, y: -0.000000031018622, z: 0.000000014902461, w: 0.9013697}
+  m_LocalPosition: {x: 56.11, y: 34.395, z: -71.12331}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 351877590}
@@ -2294,8 +2294,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1714078080}
-  m_LocalRotation: {x: 0.30621284, y: -0.6373647, z: 0.30621284, w: 0.6373647}
-  m_LocalPosition: {x: 83.643326, y: 34.395, z: -43.589993}
+  m_LocalRotation: {x: 0.43305045, y: -0.000000031018622, z: 0.000000014902461, w: 0.9013697}
+  m_LocalPosition: {x: 56.11, y: 34.395, z: -71.12331}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2911,7 +2911,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3466411916645318629}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 56.11, y: 0, z: -43.589993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2920,7 +2920,7 @@ Transform:
   - {fileID: 188054794335322392}
   m_Father: {fileID: 0}
   m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &558210674645548955
 Transform:
   m_ObjectHideFlags: 0
@@ -3169,17 +3169,16 @@ MonoBehaviour:
   movementMaster: {fileID: 0}
   turretMaster: {fileID: 0}
   target: {fileID: 84113079}
-  currentTagetNode: {x: 0, y: 0, z: 0}
   movement: {x: 0, y: 0}
-  nextWaypointDistance: 4
+  PicknextWaypointDistance: 4
   calPathRate: 5
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
+  targetTracked: 0
   boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 5
-  possibleTurn: {x: -3, y: 3}
-  targetTracked: 0
+  possibleTurnProd: 35
 --- !u!114 &3466411916645318631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3230,7 +3229,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 16
   m_CollisionDetection: 0
 --- !u!114 &3466411916645318634
 MonoBehaviour:
