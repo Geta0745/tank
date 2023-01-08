@@ -9,6 +9,7 @@ public class AISight : MonoBehaviour
     [SerializeField] AIMain ai;
     // The layer mask of objects that should be considered for line of sight
     public LayerMask layerMask;
+    public string hostileLayer;
     RaycastHit hit;
     private void Start()
     {
@@ -17,12 +18,16 @@ public class AISight : MonoBehaviour
     void Update()
     {
         Vector3 direction = ai.target.position - transform.position;
-        bool clearVision = false;
-        if (Physics.Raycast(transform.position, direction, out hit, layerMask))
+        if (Physics.Raycast(transform.position, direction, out hit,range, layerMask))
         {
-            Debug.DrawLine(transform.position, hit.point, Color.blue);
+            Debug.DrawLine(transform.position,hit.point);
+            if(hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer)){
+                ai.targetTracked = true;
+            }else{
+                ai.targetTracked = false;
+            }
         }else{
-            Debug.Log("No OBstacle Block");
+            ai.targetTracked = false;
         }
     }
 }
