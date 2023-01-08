@@ -230,6 +230,7 @@ GameObject:
   - component: {fileID: 84113078}
   - component: {fileID: 84113077}
   - component: {fileID: 84113076}
+  - component: {fileID: 84113080}
   m_Layer: 7
   m_Name: target
   m_TagString: Untagged
@@ -308,11 +309,26 @@ Transform:
   m_GameObject: {fileID: 84113075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3, y: 0.46, z: -111.6}
-  m_LocalScale: {x: 2.299, y: 2.8202, z: 2.593}
+  m_LocalScale: {x: 2.299, y: 11.63, z: 2.593}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &84113080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84113075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd17189ba3870a4d97d414e98bb78d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ArmorInfo: {fileID: 11400000, guid: 07102b147cc0b4f458ec22e4c95eeb3c, type: 2}
+  shockedDuration: 0
+  shockedMultiply: 20
 --- !u!1 &97969818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,8 +1257,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 916529585}
-  m_LocalRotation: {x: 0.43305045, y: -0.000000031018622, z: 0.000000014902461, w: 0.9013697}
-  m_LocalPosition: {x: 56.11, y: 34.395, z: -71.12331}
+  m_LocalRotation: {x: 0.06688538, y: 0.89055365, z: -0.42785385, w: 0.13921815}
+  m_LocalPosition: {x: 65.52692, y: 34.395, z: -73.000305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 351877590}
@@ -2294,8 +2310,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1714078080}
-  m_LocalRotation: {x: 0.43305045, y: -0.000000031018622, z: 0.000000014902461, w: 0.9013697}
-  m_LocalPosition: {x: 56.11, y: 34.395, z: -71.12331}
+  m_LocalRotation: {x: 0.06688538, y: 0.89055365, z: -0.42785385, w: 0.13921815}
+  m_LocalPosition: {x: 65.52692, y: 34.395, z: -73.000305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2669,7 +2685,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1844190060
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3006,8 +3022,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3466411916645318629}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 56.11, y: 0, z: -43.589993}
+  m_LocalRotation: {x: 0, y: 0.9880004, z: 0, w: 0.15445182}
+  m_LocalPosition: {x: 73.93, y: 0, z: -99.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 558210674645548955}
@@ -3015,7 +3031,7 @@ Transform:
   - {fileID: 188054794335322392}
   m_Father: {fileID: 0}
   m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 162.23, z: 0}
 --- !u!4 &558210674645548955
 Transform:
   m_ObjectHideFlags: 0
@@ -3294,6 +3310,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2176
   hostileLayer: soviet unit
+  fireAngle: 5
 --- !u!114 &3466411916645318632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3313,6 +3330,7 @@ MonoBehaviour:
   deceleration: 0.007
   currentSpeed: 0
   movement: {x: 0, y: 0}
+  moveable: 1
 --- !u!54 &3466411916645318633
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3328,7 +3346,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3466411916645318634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3343,11 +3361,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turret: {fileID: 7141783038751115622}
   muzzlePoint: {fileID: 1568966584}
-  bulletPref: {fileID: 0}
+  bulletPref: {fileID: 5783571777887461884, guid: c2ba42af64b155545b4b2e7b5dfcf8f4, type: 3}
   turretRotateSpeed: 0.9
   fireRate: 5
   coolDown: 0
   target: {x: 0, y: 0, z: 0}
+  moveable: 1
 --- !u!114 &3466411916645318635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3375,14 +3394,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3466411916645318629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f9d52a47d636e249a0d000d9e338035, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fd17189ba3870a4d97d414e98bb78d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 550
-  currentHP: 0
-  armor: {x: 10, y: 7, z: 5, w: 2}
-  dmgMultiply: {x: 0.7, y: 1.2, z: 2}
-  distructionPref: {fileID: 0}
+  _ArmorInfo: {fileID: 11400000, guid: 07102b147cc0b4f458ec22e4c95eeb3c, type: 2}
+  shockedDuration: 0
+  shockedMultiply: 20
 --- !u!65 &3466411916645318638
 BoxCollider:
   m_ObjectHideFlags: 0

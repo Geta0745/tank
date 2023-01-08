@@ -11,6 +11,7 @@ public class AISight : MonoBehaviour
     public LayerMask layerMask;
     public string hostileLayer;
     RaycastHit hit;
+    [SerializeField] float fireAngle = 5f;
     private void Start()
     {
         ai = GetComponent<AIMain>();
@@ -23,11 +24,20 @@ public class AISight : MonoBehaviour
             Debug.DrawLine(transform.position,hit.point);
             if(hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer)){
                 ai.targetTracked = true;
+                float angle = Vector3.Angle(ai.turretMaster.GetTurretTransform().forward ,hit.transform.position - transform.position);
+                if(angle <= fireAngle){
+                    ai.turretMaster.FireMainGun();
+                }
             }else{
                 ai.targetTracked = false;
             }
         }else{
             ai.targetTracked = false;
         }
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = ai.targetTracked ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(transform.position,range);
     }
 }

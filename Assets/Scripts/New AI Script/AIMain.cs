@@ -13,8 +13,8 @@ public class AIMain : MonoBehaviour
     [SerializeField]
     MovementSystem movementMaster;
     [Tooltip("Turret Movement Controller Script")]
-    [SerializeField]
-    TurretSystem turretMaster;
+    [HideInInspector]
+    public TurretSystem turretMaster;
     public Transform target;
     private NavMeshPath path;
     [Header("Calculate Path And Movement")]
