@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AIMain))]
 public class AISight : MonoBehaviour
 {
     // The range of the line of sight
@@ -18,26 +19,36 @@ public class AISight : MonoBehaviour
     }
     void Update()
     {
-        Vector3 direction = ai.target.position - transform.position;
-        if (Physics.Raycast(transform.position, direction, out hit,range, layerMask))
+        if (ai.target != null)
         {
-            Debug.DrawLine(transform.position,hit.point);
-            if(hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer)){
-                ai.targetTracked = true;
-                float angle = Vector3.Angle(ai.turretMaster.GetTurretTransform().forward ,hit.transform.position - transform.position);
-                if(angle <= fireAngle){
-                    ai.turretMaster.FireMainGun();
+            Vector3 direction = ai.target.position - transform.position;
+            if (Physics.Raycast(transform.position, direction, out hit, range, layerMask))
+            {
+                Debug.DrawLine(transform.position, hit.point);
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer))
+                {
+                    ai.targetTracked = true;
+                    float angle = Vector3.Angle(ai.turretMaster.GetTurretTransform().forward, hit.transform.position - transform.position);
+                    if (angle <= fireAngle)
+                    {
+                        ai.turretMaster.FireMainGun();
+                    }
                 }
-            }else{
+                else
+                {
+                    ai.targetTracked = false;
+                }
+            }
+            else
+            {
                 ai.targetTracked = false;
             }
-        }else{
-            ai.targetTracked = false;
         }
     }
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmos()
+    {
         Gizmos.color = ai.targetTracked ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(transform.position,range);
+        Gizmos.DrawWireSphere(transform.position, range);
     }
 }

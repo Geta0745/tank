@@ -1843,101 +1843,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 766907733}
   m_Mesh: {fileID: -7130315741164669325, guid: 8383bdf117bcd2a4da5dd2e573b9de23, type: 3}
---- !u!1 &780927922
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 780927926}
-  - component: {fileID: 780927925}
-  - component: {fileID: 780927924}
-  - component: {fileID: 780927923}
-  m_Layer: 0
-  m_Name: Cube (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &780927923
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780927922}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &780927924
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780927922}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &780927925
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780927922}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &780927926
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780927922}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.41, y: 0, z: 11.08}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &851314885
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,16 +2380,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementMaster: {fileID: 0}
   turretMaster: {fileID: 0}
-  target: {fileID: 84113079}
+  target: {fileID: 0}
   movement: {x: 0, y: 0}
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0
@@ -2512,7 +2417,7 @@ Transform:
   - {fileID: 1000533538}
   - {fileID: 142339047}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 162.23, z: 0}
 --- !u!1 &968707574
 GameObject:
@@ -2721,11 +2626,11 @@ MonoBehaviour:
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0
@@ -2753,7 +2658,7 @@ Transform:
   - {fileID: 491753131}
   - {fileID: 667481396}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 162.23, z: 0}
 --- !u!1 &977260392
 GameObject:
@@ -4257,11 +4162,11 @@ MonoBehaviour:
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0
@@ -5861,11 +5766,11 @@ MonoBehaviour:
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0
@@ -5893,7 +5798,7 @@ Transform:
   - {fileID: 1299406840}
   - {fileID: 181519790}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 162.23, z: 0}
 --- !u!1 &2016141825
 GameObject:
@@ -6102,11 +6007,11 @@ MonoBehaviour:
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0
@@ -6134,7 +6039,7 @@ Transform:
   - {fileID: 989676075}
   - {fileID: 1992313297}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 162.23, z: 0}
 --- !u!1 &2094501048
 GameObject:
@@ -6674,11 +6579,11 @@ MonoBehaviour:
   PicknextWaypointDistance: 4
   calPathRate: 1
   enableAvoidOtherUnit: 1
+  hitboxSize: {x: 2.3, y: 1, z: 4.4}
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 2432
   targetTracked: 0
-  boxcastHalfExtents: {x: 2.8, y: 1.14, z: 3.06}
   AvoidDistance: 3.6
   possibleTurnProd: 35
   dotProdFront: 0

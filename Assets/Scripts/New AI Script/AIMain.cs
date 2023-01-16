@@ -31,10 +31,10 @@ public class AIMain : MonoBehaviour
     [Space]
     [Header("Recalculate Movement to Avoid Obstacle")]
     public bool enableAvoidOtherUnit = true;
+    [SerializeField] Vector3 hitboxSize = new Vector3(1f,1f,1f);
     public LayerMask obstacleMask;
     public bool targetTracked = false;
     [Tooltip("Size of Avoid Obstacle Zone")]
-    public Vector3 boxcastHalfExtents = new Vector3(1.0f, 1.0f, 1.0f);
     public float AvoidDistance = 5.0f;
     [SerializeField]
     [Tooltip("Possible Dot Prod Angle Turn")]
@@ -44,6 +44,9 @@ public class AIMain : MonoBehaviour
     private void Start()
     {
         path = new NavMeshPath();
+        if(target == null){
+            calPathRate = 10f;
+        }
         movementMaster = GetComponent<MovementSystem>();
         turretMaster = GetComponent<TurretSystem>();
         InvokeRepeating("CalculatePath", 0f, calPathRate);
@@ -70,7 +73,7 @@ public class AIMain : MonoBehaviour
             {
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
                 movementMaster.SetMovement(movement);
-                turretMaster.SetTarget(path.corners[currentNode]);
+                turretMaster.SetTarget(transform.position+ transform.forward);
             }
             else if(targetTracked && obstacleHit) //target in sight
             {
@@ -143,13 +146,13 @@ public class AIMain : MonoBehaviour
 
     public bool CheckObstacle()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, AvoidDistance,obstacleMask);
+        //Collider[] colliders = Physics.OverlapSphere(transform.position, AvoidDistance,obstacleMask);
+        Collider[] colliders = Physics.OverlapBox(transform.position,hitboxSize,transform.localRotation,obstacleMask);
 
         foreach (Collider collider in colliders)
         {
             if (collider.gameObject != gameObject)
             {
-                Debug.LogError(gameObject.name + " --> " + collider.gameObject.name);
                 return true;
             }
         }
@@ -159,7 +162,8 @@ public class AIMain : MonoBehaviour
 
     Vector3 ReflectedObstaclePosition()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, AvoidDistance, obstacleMask);
+        //Collider[] hitColliders = Physics.OverlapSphere(transform.position, AvoidDistance, obstacleMask);
+        Collider[] hitColliders = Physics.OverlapBox(transform.position,hitboxSize,transform.localRotation,obstacleMask);
         Vector3 center = Vector3.zero;
         if (hitColliders.Length > 0)
         {
@@ -175,7 +179,7 @@ public class AIMain : MonoBehaviour
     {
         RaycastHit hitInfo;
         // Perform the Boxcast to check for obstacles
-        bool hit = Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask);
+        bool hit = Physics.BoxCast(transform.position, hitboxSize, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask);
 
         // If an obstacle was hit, adjust the movement to avoid the obstacle
         if (hit)
@@ -218,6 +222,8 @@ public class AIMain : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(transform.position, AvoidDistance);
+        Gizmos.color = Color.red;
+    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+    Gizmos.DrawWireCube(Vector3.zero, hitboxSize * 2);
     }
 }
