@@ -30,6 +30,7 @@ public class AIMain : MonoBehaviour
 
     [Space]
     [Header("Recalculate Movement to Avoid Obstacle")]
+    public bool enableAvoidOtherUnit = true;
     public LayerMask obstacleMask;
     public bool targetTracked = false;
     [Tooltip("Size of Avoid Obstacle Zone")]
@@ -51,11 +52,13 @@ public class AIMain : MonoBehaviour
     {
         if (currentNode < path.corners.Length) //check if not reached destination
         {
+            bool obstacleHit = CheckObstacle();
             //check if have other unit block 
-            if (CheckObstacle())
+            if (obstacleHit && enableAvoidOtherUnit)
             {
-                dotProdFront = Vector3.Dot(transform.forward, ReflectedObstaclePosition() - transform.position);
-                dotProdRear = Vector3.Dot(transform.right, ReflectedObstaclePosition() - transform.position);
+                dotProdFront = Vector3.Dot(transform.forward, transform.position - ReflectedObstaclePosition());
+                dotProdRear = Vector3.Dot(transform.right, transform.position - ReflectedObstaclePosition());
+                Debug.DrawLine(transform.position, transform.position - ReflectedObstaclePosition(), Color.red);
             }
             else
             {
@@ -69,8 +72,12 @@ public class AIMain : MonoBehaviour
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(path.corners[currentNode]);
             }
-            else //target in sight
+            else if(targetTracked && obstacleHit) //target in sight
             {
+                movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
+                movementMaster.SetMovement(movement);
+                turretMaster.SetTarget(target.position);
+            }else if(targetTracked && !obstacleHit){
                 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(target.position);
@@ -89,7 +96,7 @@ public class AIMain : MonoBehaviour
 
         for (int i = 0; i < path.corners.Length - 1; i++)//draw line
         {
-            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);
+            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.green);
         }
     }
 
@@ -98,13 +105,14 @@ public class AIMain : MonoBehaviour
         if (target != null)
         {
             NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
+            NavMesh.CalculateTriangulation();
         }
         else
         {
             NavMesh.CalculatePath(transform.position, RandomPositionOnNavmesh(), NavMesh.AllAreas, path);
         }
         currentNode = 0;
-        Debug.LogWarning("Calculated Path : " + path.corners.Length);
+
     }
 
     Vector3 RandomPositionOnNavmesh()
@@ -135,21 +143,33 @@ public class AIMain : MonoBehaviour
 
     public bool CheckObstacle()
     {
-        return Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, Quaternion.identity, AvoidDistance, obstacleMask);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, AvoidDistance,obstacleMask);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.gameObject != gameObject)
+            {
+                Debug.LogError(gameObject.name + " --> " + collider.gameObject.name);
+                return true;
+            }
+        }
+        return false;
+        //return Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, Quaternion.identity, AvoidDistance, obstacleMask);
     }
 
     Vector3 ReflectedObstaclePosition()
     {
-        RaycastHit hitInfo;
-        if (Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask))
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, AvoidDistance, obstacleMask);
+        Vector3 center = Vector3.zero;
+        if (hitColliders.Length > 0)
         {
-            Debug.DrawLine(hitInfo.normal, transform.position + Vector3.Reflect(transform.forward, hitInfo.normal), Color.green);
-            return Vector3.Reflect(transform.forward, hitInfo.normal);
+            foreach (Collider collider in hitColliders)
+            {
+                center += collider.transform.position;
+            }
+            center = center / hitColliders.Length;
         }
-        else
-        {
-            return Vector3.zero;
-        }
+        return center;
     }
     Vector2 AvoidanceObstacle()
     {
@@ -183,7 +203,7 @@ public class AIMain : MonoBehaviour
         }
         //return Vector2.zero;
     }
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         // Perform the boxcast
         RaycastHit hitInfo;
@@ -194,5 +214,10 @@ public class AIMain : MonoBehaviour
         Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * AvoidDistance, transform.rotation, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, boxcastHalfExtents * 2);
         Gizmos.matrix = Matrix4x4.identity;
+    }*/
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, AvoidDistance);
     }
 }

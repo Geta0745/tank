@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   penerationPoint: 102
   mass: 10
-  velocity: 200
+  velocity: 100
   shape: 0

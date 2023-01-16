@@ -59,11 +59,6 @@ public class TurretSystem : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(turret.position, target);
-    }
-
     public void SetTarget(Vector3 target)
     {
         this.target = target;
