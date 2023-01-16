@@ -8,7 +8,7 @@ public class AimPointSystem : MonoBehaviour
     Camera cam;
     public float reachedAngle = 10f;
     [SerializeField] SpriteRenderer aimIcon;
-    [SerializeField] PlayerMainTurret player;
+    //[SerializeField] PlayerMainTurret player;
     [SerializeField] LineRenderer lrMuzzleError;
     [SerializeField] LineRenderer lrMuzzle;
 
