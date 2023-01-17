@@ -114,14 +114,10 @@ public class AIMain : MonoBehaviour
         NavMeshHit hit;
         if (NavMesh.SamplePosition(transform.position, out hit, 0.1f, NavMesh.AllAreas))
         {
-            // object is on NavMesh
-            Debug.Log("Object is on NavMesh");
+            
         }
         else
         {
-            // object is not on NavMesh
-            Debug.Log("Object is not on NavMesh");
-
             // Calculate the closest point on the NavMesh to the object's position
             NavMesh.SamplePosition(transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
             Vector3 closestPoint = hit.position;
@@ -129,17 +125,6 @@ public class AIMain : MonoBehaviour
             // Calculate a new NavMesh path to the desired end point
             NavMeshPath path = new NavMeshPath();
             NavMesh.CalculatePath(closestPoint, target.position, NavMesh.AllAreas, path);
-
-            // Check if the new path is valid
-            if (path.status == NavMeshPathStatus.PathComplete)
-            {
-                Debug.Log("New path is valid");
-                // Do something with the new path
-            }
-            else
-            {
-                Debug.Log("New path is not valid");
-            }
         }
     }
 
