@@ -9,12 +9,13 @@ public class HPSystem : MonoBehaviour
     MovementSystem movementMaster;
     TurretSystem turretMaster;
     [SerializeField] float shockedMultiply = 20f; // shocked += 20f / remainArmorPeneration (example 20f)=1f
+    Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
         movementMaster = GetComponent<MovementSystem>();
         turretMaster = GetComponent<TurretSystem>();
-        Debug.Log(CalRelativeArmor(transform.position));
+        rb = GetComponent<Rigidbody>();
     }
 
     public float CalRelativeArmor(Vector3 hitPos)
@@ -50,7 +51,7 @@ public class HPSystem : MonoBehaviour
         return c;
     }
 
-    public void CalPeneration(float relativeArmor, float armorPenerationPoint)
+    public void CalPeneration(float relativeArmor, float armorPenerationPoint, Vector3 hitPos)
     {
         if (armorPenerationPoint > 0f)
         {
@@ -64,6 +65,10 @@ public class HPSystem : MonoBehaviour
             }
             else
             {
+                if (rb != null)
+                {
+                    rb.AddForceAtPosition(transform.up * 1f, hitPos, ForceMode.VelocityChange);
+                }
                 WhenPentrated(relativeArmor - armorPenerationPoint);
             }
         }
@@ -72,17 +77,19 @@ public class HPSystem : MonoBehaviour
     public void HitAction(Vector3 hitPos, float armorPenerationPoint)
     {
         float relativeArmor = CalRelativeArmor(hitPos);
-        CalPeneration(relativeArmor, armorPenerationPoint);
+        CalPeneration(relativeArmor, armorPenerationPoint, hitPos);
     }
 
     public virtual void WhenPentrated(float remaineArmorPenerate)
     {
         shockedDuration += 0.2f;
-        shockedDuration += 15f / remaineArmorPenerate;
+        shockedDuration += shockedMultiply / Mathf.Abs(remaineArmorPenerate);
+
     }
 
     public virtual void WhenCantPenerated()
     {
+        Debug.LogWarning("Shocked : " + shockedDuration + " / 0.3f" );
         shockedDuration += 0.3f;
     }
     // Update is called once per frame

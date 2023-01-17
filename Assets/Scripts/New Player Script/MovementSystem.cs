@@ -67,4 +67,9 @@ public class MovementSystem : MonoBehaviour
         return currentSpeed;
     }
 
+    private void OnCollisionEnter(Collision other) {
+        if(other.gameObject.layer != LayerMask.NameToLayer("german projectile") && other.gameObject.layer != LayerMask.NameToLayer("soviet projectile")){
+            currentSpeed = 0f;
+        }
+    }
 }

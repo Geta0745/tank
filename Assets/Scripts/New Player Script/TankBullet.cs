@@ -21,7 +21,6 @@ public class TankBullet : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision other) {
-        Debug.LogError(other.gameObject.name);
         HPSystem hp = other.gameObject.GetComponent<HPSystem>();
         if(hp != null){
             hp.HitAction(other.contacts[0].point,ammoType.penerationPoint);

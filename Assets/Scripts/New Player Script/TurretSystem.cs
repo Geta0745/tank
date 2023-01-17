@@ -13,10 +13,12 @@ public class TurretSystem : MonoBehaviour
 
     [SerializeField] Vector3 target;
     public bool moveable = true;
+    Rigidbody rb;
     // Update is called once per frame
     private void Start()
     {
         coolDown = fireRate;
+        rb = GetComponent<Rigidbody>();
     }
     private void Update()
     {
@@ -52,10 +54,13 @@ public class TurretSystem : MonoBehaviour
             {
                 TankBullet bullet = Instantiate(bulletPref,muzzlePoint.position,muzzlePoint.rotation).GetComponent<TankBullet>();
                 // Destroy the bullet after 10 seconds
+                if(rb != null){
+                    rb.AddForceAtPosition(transform.up *0.5f,muzzlePoint.position,ForceMode.VelocityChange);
+                }
                 Destroy(bullet.gameObject, 10f);
             }
             coolDown = fireRate;
-            Debug.Log("Fired Main Gun!");
+            //Debug.Log("Fired Main Gun!");
         }
     }
 

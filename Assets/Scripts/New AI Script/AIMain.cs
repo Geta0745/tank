@@ -146,7 +146,6 @@ public class AIMain : MonoBehaviour
         else
         {
             // object is not on NavMesh
-            Debug.Log("Object is not on NavMesh");
 
             // Calculate the closest point on the NavMesh to the object's position
             NavMesh.SamplePosition(transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
