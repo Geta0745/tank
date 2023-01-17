@@ -13,6 +13,7 @@ public class AISight : MonoBehaviour
     public string hostileLayer;
     RaycastHit hit;
     [SerializeField] float fireAngle = 5f;
+    public bool enableGizmos = false;
     private void Start()
     {
         ai = GetComponent<AIMain>();
@@ -48,7 +49,11 @@ public class AISight : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = ai.targetTracked ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
+        if (enableGizmos)
+        {
+            Gizmos.color = ai.targetTracked ? Color.green : Color.red;
+            Gizmos.DrawWireSphere(transform.position, range);
+        }
+
     }
 }

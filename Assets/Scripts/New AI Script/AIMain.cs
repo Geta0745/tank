@@ -31,7 +31,7 @@ public class AIMain : MonoBehaviour
     [Space]
     [Header("Recalculate Movement to Avoid Obstacle")]
     public bool enableAvoidOtherUnit = true;
-    [SerializeField] Vector3 hitboxSize = new Vector3(1f,1f,1f);
+    [SerializeField] Vector3 hitboxSize = new Vector3(1f, 1f, 1f);
     public LayerMask obstacleMask;
     public bool targetTracked = false;
     [Tooltip("Size of Avoid Obstacle Zone")]
@@ -40,11 +40,14 @@ public class AIMain : MonoBehaviour
     [Tooltip("Possible Dot Prod Angle Turn")]
     float possibleTurnProd = 3f;
     [SerializeField] float dotProdFront, dotProdRear;
+    private Color RandomPathColor;
 
     private void Start()
     {
+        RandomPathColor = new Color(Random.value, Random.value, Random.value);
         path = new NavMeshPath();
-        if(target == null){
+        if (target == null)
+        {
             calPathRate = 10f;
         }
         movementMaster = GetComponent<MovementSystem>();
@@ -53,6 +56,7 @@ public class AIMain : MonoBehaviour
     }
     void Update()
     {
+        CheckUnitInPath();
         if (currentNode < path.corners.Length) //check if not reached destination
         {
             bool obstacleHit = CheckObstacle();
@@ -73,14 +77,16 @@ public class AIMain : MonoBehaviour
             {
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
                 movementMaster.SetMovement(movement);
-                turretMaster.SetTarget(transform.position+ transform.forward);
+                turretMaster.SetTarget(transform.position + transform.forward);
             }
-            else if(targetTracked && obstacleHit) //target in sight
+            else if (targetTracked && obstacleHit) //target in sight
             {
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(target.position);
-            }else if(targetTracked && !obstacleHit){
+            }
+            else if (targetTracked && !obstacleHit)
+            {
                 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
                 movementMaster.SetMovement(movement);
                 turretMaster.SetTarget(target.position);
@@ -99,20 +105,70 @@ public class AIMain : MonoBehaviour
 
         for (int i = 0; i < path.corners.Length - 1; i++)//draw line
         {
-            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.green);
+            Debug.DrawLine(path.corners[i], path.corners[i + 1], RandomPathColor);
+        }
+    }
+
+    void CheckUnitInPath()
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, 0.1f, NavMesh.AllAreas))
+        {
+            // object is on NavMesh
+            Debug.Log("Object is on NavMesh");
+        }
+        else
+        {
+            // object is not on NavMesh
+            Debug.Log("Object is not on NavMesh");
+
+            // Calculate the closest point on the NavMesh to the object's position
+            NavMesh.SamplePosition(transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
+            Vector3 closestPoint = hit.position;
+
+            // Calculate a new NavMesh path to the desired end point
+            NavMeshPath path = new NavMeshPath();
+            NavMesh.CalculatePath(closestPoint, target.position, NavMesh.AllAreas, path);
+
+            // Check if the new path is valid
+            if (path.status == NavMeshPathStatus.PathComplete)
+            {
+                Debug.Log("New path is valid");
+                // Do something with the new path
+            }
+            else
+            {
+                Debug.Log("New path is not valid");
+            }
         }
     }
 
     void CalculatePath()
     {
-        if (target != null)
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, 0.1f, NavMesh.AllAreas))
         {
-            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
-            NavMesh.CalculateTriangulation();
+            // object is on NavMesh
+            if (target != null)
+            {
+                NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
+            }
+            else
+            {
+                NavMesh.CalculatePath(transform.position, RandomPositionOnNavmesh(), NavMesh.AllAreas, path);
+            }
         }
         else
         {
-            NavMesh.CalculatePath(transform.position, RandomPositionOnNavmesh(), NavMesh.AllAreas, path);
+            // object is not on NavMesh
+            Debug.Log("Object is not on NavMesh");
+
+            // Calculate the closest point on the NavMesh to the object's position
+            NavMesh.SamplePosition(transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
+            Vector3 closestPoint = hit.position;
+
+            // Calculate a new NavMesh path to the desired end point
+            NavMesh.CalculatePath(closestPoint, target.position, NavMesh.AllAreas, path);
         }
         currentNode = 0;
 
@@ -146,8 +202,7 @@ public class AIMain : MonoBehaviour
 
     public bool CheckObstacle()
     {
-        //Collider[] colliders = Physics.OverlapSphere(transform.position, AvoidDistance,obstacleMask);
-        Collider[] colliders = Physics.OverlapBox(transform.position,hitboxSize,transform.localRotation,obstacleMask);
+        Collider[] colliders = Physics.OverlapBox(transform.position, hitboxSize, transform.localRotation, obstacleMask);
 
         foreach (Collider collider in colliders)
         {
@@ -157,13 +212,11 @@ public class AIMain : MonoBehaviour
             }
         }
         return false;
-        //return Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, Quaternion.identity, AvoidDistance, obstacleMask);
     }
 
     Vector3 ReflectedObstaclePosition()
     {
-        //Collider[] hitColliders = Physics.OverlapSphere(transform.position, AvoidDistance, obstacleMask);
-        Collider[] hitColliders = Physics.OverlapBox(transform.position,hitboxSize,transform.localRotation,obstacleMask);
+        Collider[] hitColliders = Physics.OverlapBox(transform.position, hitboxSize, transform.localRotation, obstacleMask);
         Vector3 center = Vector3.zero;
         if (hitColliders.Length > 0)
         {
@@ -205,25 +258,11 @@ public class AIMain : MonoBehaviour
         {
             return new Vector2(Mathf.Clamp(prodMovement.x, -1, 1), 0f);
         }
-        //return Vector2.zero;
     }
-    /*private void OnDrawGizmos()
-    {
-        // Perform the boxcast
-        RaycastHit hitInfo;
-        bool hit = Physics.BoxCast(transform.position, boxcastHalfExtents, transform.forward, out hitInfo, Quaternion.identity, AvoidDistance, obstacleMask);
-
-        // Draw the boxcast area
-        Gizmos.color = hit ? Color.red : Color.green;
-        Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * AvoidDistance, transform.rotation, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, boxcastHalfExtents * 2);
-        Gizmos.matrix = Matrix4x4.identity;
-    }*/
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-    Gizmos.DrawWireCube(Vector3.zero, hitboxSize * 2);
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+        Gizmos.DrawWireCube(Vector3.zero, hitboxSize * 2);
     }
 }
