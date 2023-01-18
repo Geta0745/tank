@@ -6,6 +6,7 @@ using UnityEngine;
 public class AmmunitionType : ScriptableObject
 {
     public float penerationPoint = 102f;
+    public float damage = 5f;
     public float mass = 10f;
     public float velocity = 20f;
     public float fuzeDelay = 0.2f;
