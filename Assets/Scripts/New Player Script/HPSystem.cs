@@ -90,6 +90,14 @@ public class HPSystem : MonoBehaviour
         //foreach for damage component
         /*foreach(TankComponent component in components){
             float distance = Vector3.Distance(hitPos + (forwardDir * ammoType.fuzeDelay),component.gameObject.transform.position);
+            float totalRadius = ammoType.explosionRadius + component.radius;
+            if(distance < totalRadius){
+                //explosion is inside radius
+                float damageMultiply = 1-(distance / component.radius);
+                component.TakeDamage(ammoType.damage * damageMultiply);
+            }else{
+                //explosion is out side radius 
+            }
         }*/
     }
     
