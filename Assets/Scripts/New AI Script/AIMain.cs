@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(MovementSystem))]
-[RequireComponent(typeof(TurretSystem))]
-[RequireComponent(typeof(AISight))]
+[RequireComponent(typeof(MovementSystem)),RequireComponent(typeof(TurretSystem)),RequireComponent(typeof(AISight))]
 public class AIMain : MonoBehaviour
 {
     [Header("Master Movement And Turret Controller"),SerializeField,HideInInspector]
