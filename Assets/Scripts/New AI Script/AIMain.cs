@@ -35,6 +35,7 @@ public class AIMain : MonoBehaviour
     [SerializeField]
     [Tooltip("Possible Dot Prod Angle Turn")]
     float possibleTurnProd = 3f;
+    float predictionFactor = 2f;
     [SerializeField] float dotProdFront, dotProdRear;
     private Color RandomPathColor;
 
@@ -92,7 +93,11 @@ public class AIMain : MonoBehaviour
                 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
                 movementMaster.SetMovement(movement);
                 if(target != null){
-                    turretMaster.SetTarget(target.position);
+                    if(target.gameObject.GetComponent<Rigidbody>() != null){
+                        turretMaster.SetTarget(target.position + (target.rigidbody.velocity * predictionFactor));
+                    }else{
+                        turretMaster.SetTarget(target.position);
+                    } 
                 }else{
                     turretMaster.SetIdleTurret();
                 }
