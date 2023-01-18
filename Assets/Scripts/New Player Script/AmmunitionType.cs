@@ -9,6 +9,7 @@ public class AmmunitionType : ScriptableObject
     public float mass = 10f;
     public float velocity = 20f;
     public float fuzeDelay = 0.2f;
+    public float explosionRadius = 0.5f;
     public enum Shape
     {
         APHEBC, // Armor-piercing hight explosive ballistic capped
