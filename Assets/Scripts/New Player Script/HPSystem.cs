@@ -10,6 +10,7 @@ public class HPSystem : MonoBehaviour
     TurretSystem turretMaster;
     [SerializeField] float shockedMultiply = 20f; // shocked += 20f / remainArmorPeneration (example 20f)=1f
     Rigidbody rb;
+    float Hp = 10f;
     // Start is called before the first frame update
     void Start()
     {
@@ -86,7 +87,21 @@ public class HPSystem : MonoBehaviour
         shockedDuration += shockedMultiply / Mathf.Abs(remaineArmorPenerate);
 
     }
-
+    
+    public void TakeDamageToMainTank(float damage){
+        if(damage > 0f){
+            //max HP is always 10f
+            Hp = Mathf.Clamp(Hp-damage,0f,10f);
+            if(Hp <= 0f){
+                DestroyTank();
+            }
+        }
+    }
+    
+    public void DestroyTank(){
+        Destroy(gameObject);
+    }
+    
     public virtual void WhenCantPenerated()
     {
         Debug.LogWarning("Shocked : " + shockedDuration + " / 0.3f" );
