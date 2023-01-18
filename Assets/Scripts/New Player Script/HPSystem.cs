@@ -11,6 +11,7 @@ public class HPSystem : MonoBehaviour
     [SerializeField] float shockedMultiply = 20f; // shocked += 20f / remainArmorPeneration (example 20f)=1f
     Rigidbody rb;
     float Hp = 10f;
+    [SerializeField] TankComponent[] components;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,7 +53,7 @@ public class HPSystem : MonoBehaviour
         return c;
     }
 
-    public void CalPeneration(float relativeArmor, float armorPenerationPoint, Vector3 hitPos)
+    public void CalPeneration(float relativeArmor, float armorPenerationPoint, Vector3 hitPos,Vector3 forwardDir)
     {
         if (armorPenerationPoint > 0f)
         {
@@ -70,21 +71,22 @@ public class HPSystem : MonoBehaviour
                 {
                     rb.AddForceAtPosition(transform.up * 1f, hitPos, ForceMode.VelocityChange);
                 }
-                WhenPentrated(relativeArmor - armorPenerationPoint);
+                WhenPentrated(relativeArmor - armorPenerationPoint,forwardDir);
             }
         }
     }
 
-    public void HitAction(Vector3 hitPos, float armorPenerationPoint)
+    public void HitAction(Vector3 hitPos, float armorPenerationPoint,Vector3 forwardDir)
     {
         float relativeArmor = CalRelativeArmor(hitPos);
-        CalPeneration(relativeArmor, armorPenerationPoint, hitPos);
+        CalPeneration(relativeArmor, armorPenerationPoint, hitPos,forwardDir);
     }
 
-    public virtual void WhenPentrated(float remaineArmorPenerate)
+    public virtual void WhenPentrated(float remaineArmorPenerate,Vector3 forwardDir)
     {
         shockedDuration += 0.2f;
         shockedDuration += shockedMultiply / Mathf.Abs(remaineArmorPenerate);
+        //foreach for damage component
 
     }
     
