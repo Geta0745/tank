@@ -73,4 +73,12 @@ public class TurretSystem : MonoBehaviour
     {
         target = transform.position + transform.forward;
     }
+    
+    public Vector3 GetTurretPoint(){
+        return turret.position;
+    }
+    
+    public Vector3 GetMuzzlePoint(){
+        return muzzlePoint.position;
+    }
 }
