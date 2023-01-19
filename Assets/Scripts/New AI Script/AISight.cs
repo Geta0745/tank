@@ -14,18 +14,20 @@ public class AISight : MonoBehaviour
     RaycastHit hit;
     [SerializeField] float fireAngle = 5f;
     public bool enableGizmos = false;
+    TurretSystem turretmaster;
     private void Start()
     {
         ai = GetComponent<AIMain>();
+        turretMaster = Getcomponent<TurretSystem>();
     }
     void Update()
     {
         if (ai.target != null)
         {
-            Vector3 direction = ai.target.position - transform.position;
-            if (Physics.Raycast(transform.position, direction, out hit, range, layerMask))
+            Vector3 direction = ai.target.position - turretMaster.GetTurretPoint();
+            if (Physics.Raycast(turretMaster.GetTurretPoint(), direction, out hit, range, layerMask))
             {
-                Debug.DrawLine(transform.position, hit.point);
+                Debug.DrawLine(turretMaster.GetTurretPoint(), hit.point);
                 if (hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer))
                 {
                     ai.targetTracked = true;

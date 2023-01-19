@@ -3,29 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(MovementSystem))]
-[RequireComponent(typeof(TurretSystem))]
-[RequireComponent(typeof(AISight))]
+[RequireComponent(typeof(MovementSystem)),RequireComponent(typeof(TurretSystem)),RequireComponent(typeof(AISight))]
 public class AIMain : MonoBehaviour
 {
-    [Header("Movement Controller Script")]
-    [Tooltip("Movement Controller Script")]
-    [SerializeField]
+    [Header("Master Movement And Turret Controller"),SerializeField,HideInInspector]
     MovementSystem movementMaster;
-    [Tooltip("Turret Movement Controller Script")]
-    [HideInInspector]
-    public TurretSystem turretMaster;
+    [Tooltip("Turret Movement Controller Script"),HideInInspector]
+    TurretSystem turretMaster;
+    [Tooltip("Target Transform that will be the Ai destination if target = null Ai will random path")]
     public Transform target;
     private NavMeshPath path;
-    [Header("Calculate Path And Movement")]
-    [SerializeField]
-    [Tooltip("Holder Calculated Movement Value")]
+    [Header("Calculate Path And Movement"),SerializeField,Tooltip("Holder Calculated Movement Value")]
     Vector2 movement;
     [SerializeField]
     float PicknextWaypointDistance = 4f;
+    [SerializeField] 
     private int currentNode = 0;
-    [SerializeField]
-    [Tooltip("Calculate Path Rate")]
+    [SerializeField,Tooltip("Calculate Path Rate")]
     float calPathRate = 10f;
 
     [Space]
@@ -39,36 +33,37 @@ public class AIMain : MonoBehaviour
     [SerializeField]
     [Tooltip("Possible Dot Prod Angle Turn")]
     float possibleTurnProd = 3f;
+    float predictionFactor = 2f;
     [SerializeField] float dotProdFront, dotProdRear;
     private Color RandomPathColor;
 
     private void Start()
     {
+        //random Color for pathfinding AI
         RandomPathColor = new Color(Random.value, Random.value, Random.value);
+        
+        //Declare New navmesh path
         path = new NavMeshPath();
-        if (target == null)
-        {
-            calPathRate = 10f;
-        }
         movementMaster = GetComponent<MovementSystem>();
         turretMaster = GetComponent<TurretSystem>();
         InvokeRepeating("CalculatePath", 0f, calPathRate);
     }
     void Update()
     {
-        CheckUnitInPath();
+        bool obstacleHit = CheckObstacle();
         if (currentNode < path.corners.Length) //check if not reached destination
         {
-            bool obstacleHit = CheckObstacle();
-            //check if have other unit block 
+            //check if have other unit block and enable to check obstacle
             if (obstacleHit && enableAvoidOtherUnit)
             {
+                //assign dotprod to avoid obstacle
                 dotProdFront = Vector3.Dot(transform.forward, transform.position - ReflectedObstaclePosition());
                 dotProdRear = Vector3.Dot(transform.right, transform.position - ReflectedObstaclePosition());
                 Debug.DrawLine(transform.position, transform.position - ReflectedObstaclePosition(), Color.red);
             }
             else
             {
+                //if not hit or anything assign dotprod to path cornors
                 dotProdRear = Vector3.Dot(transform.right, path.corners[currentNode] - transform.position);
                 dotProdFront = Vector3.Dot(transform.forward, path.corners[currentNode] - transform.position);
             }
@@ -77,19 +72,33 @@ public class AIMain : MonoBehaviour
             {
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
                 movementMaster.SetMovement(movement);
-                turretMaster.SetTarget(transform.position + transform.forward);
+                turretMaster.SetIdleTurret();
             }
-            else if (targetTracked && obstacleHit) //target in sight
+            else if (targetTracked && obstacleHit) //target in sight and have other unit nearby
             {
+                //try to avoid other unit and make turret point to target
                 movement = CalMoveDirection(new Vector2(dotProdRear, dotProdFront));
                 movementMaster.SetMovement(movement);
-                turretMaster.SetTarget(target.position);
+                if(target != null){
+                    turretMaster.SetTarget(target.position);
+                }else{
+                    turretMaster.SetIdleTurret();
+                }
             }
-            else if (targetTracked && !obstacleHit)
+            else if (targetTracked && !obstacleHit)//target in sight and no other unit nearby 
             {
+                //try rotate tank hull to facing target and point turret to target
                 movement = new Vector2(Mathf.Clamp(Vector3.Dot(transform.right, target.position - transform.position), -1f, 1f), 0f);
                 movementMaster.SetMovement(movement);
-                turretMaster.SetTarget(target.position);
+                if(target != null){
+                    if(target.gameObject.GetComponent<Rigidbody>() != null){
+                        turretMaster.SetTarget(target.position + (target.rigidbody.velocity * predictionFactor));
+                    }else{
+                        turretMaster.SetTarget(target.position);
+                    } 
+                }else{
+                    turretMaster.SetIdleTurret();
+                }
             }
 
             if (Vector3.Distance(transform.position, path.corners[currentNode]) < PicknextWaypointDistance)//pick next node
@@ -106,25 +115,6 @@ public class AIMain : MonoBehaviour
         for (int i = 0; i < path.corners.Length - 1; i++)//draw line
         {
             Debug.DrawLine(path.corners[i], path.corners[i + 1], RandomPathColor);
-        }
-    }
-
-    void CheckUnitInPath()
-    {
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(transform.position, out hit, 0.1f, NavMesh.AllAreas))
-        {
-            
-        }
-        else
-        {
-            // Calculate the closest point on the NavMesh to the object's position
-            NavMesh.SamplePosition(transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
-            Vector3 closestPoint = hit.position;
-
-            // Calculate a new NavMesh path to the desired end point
-            NavMeshPath path = new NavMeshPath();
-            NavMesh.CalculatePath(closestPoint, target.position, NavMesh.AllAreas, path);
         }
     }
 

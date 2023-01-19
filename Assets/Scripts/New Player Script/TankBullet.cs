@@ -23,7 +23,7 @@ public class TankBullet : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
         HPSystem hp = other.gameObject.GetComponent<HPSystem>();
         if(hp != null){
-            hp.HitAction(other.contacts[0].point,ammoType.penerationPoint);
+            hp.HitAction(other.contacts[0].point,ammoType,transform.forward);
         }
         Destroy(gameObject);
     }
