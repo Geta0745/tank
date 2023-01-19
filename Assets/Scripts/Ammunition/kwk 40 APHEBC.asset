@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cc2f685d9541a34daa10ded9069bb97, type: 3}
   m_Name: kwk 40 APHEBC
   m_EditorClassIdentifier: 
-  penerationPoint: 102
+  penerationPoint: 5
+  damage: 5
   mass: 10
   velocity: 100
+  fuzeDelay: 0.2
+  explosionRadius: 0.5
   shape: 0

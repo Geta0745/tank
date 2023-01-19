@@ -20,7 +20,7 @@ public class HPSystem : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    public float CalRelativeArmor(Vector3 hitPos)
+    public float CalRelativeArmor(Vector3 hitPos,AmmunitionType ammoType)
     { // a = Armor Thickness , b = Angle of Impact , c = relative Armor
         float a, b = 0f;
         float angle = Vector3.Angle(hitPos, transform.forward);
@@ -53,7 +53,7 @@ public class HPSystem : MonoBehaviour
         return c;
     }
 
-    public void CalPeneration(float relativeArmor, AmmunitionType ammoType, Vector3 hitPos,Vector3 forwardDir)
+    public void CalPeneration(float relativeArmor, AmmunitionType ammoType, Vector3 hitPos, Vector3 forwardDir)
     {
         float armorPenerationPoint = ammoType.penerationPoint;
         if (armorPenerationPoint > 0f)
@@ -72,52 +72,59 @@ public class HPSystem : MonoBehaviour
                 {
                     rb.AddForceAtPosition(transform.up * 1f, hitPos, ForceMode.VelocityChange);
                 }
-                WhenPentrated(relativeArmor - armorPenerationPoint,forwardDir,ammoType,hitPos);
+                WhenPentrated(relativeArmor - armorPenerationPoint, forwardDir, ammoType, hitPos);
             }
         }
     }
 
-    public void HitAction(Vector3 hitPos,AmmunitionType ammoType,Vector3 forwardDir)
+    public void HitAction(Vector3 hitPos, AmmunitionType ammoType, Vector3 forwardDir)
     {
-        float relativeArmor = CalRelativeArmor(hitPos);
-        CalPeneration(relativeArmor, ammoType, hitPos,forwardDir);
+        float relativeArmor = CalRelativeArmor(hitPos,ammoType);
+        CalPeneration(relativeArmor, ammoType, hitPos, forwardDir);
     }
 
-    public virtual void WhenPentrated(float remaineArmorPenerate,Vector3 forwardDir,AmmunitionType ammoType,Vector3 hitPos)
+    public virtual void WhenPentrated(float remaineArmorPenerate, Vector3 forwardDir, AmmunitionType ammoType, Vector3 hitPos)
     {
         shockedDuration += 0.2f;
         shockedDuration += shockedMultiply / Mathf.Abs(remaineArmorPenerate);
         //foreach for damage component
-        /*foreach(TankComponent component in components){
-            float distance = Vector3.Distance(hitPos + (forwardDir * ammoType.fuzeDelay),component.gameObject.transform.position);
-            float totalRadius = ammoType.explosionRadius + component.radius;
-            if(distance < totalRadius){
-                //explosion is inside radius
-                float damageMultiply = 1-(distance / component.radius);
-                component.TakeDamage(ammoType.damage * damageMultiply);
-            }else{
-                //explosion is out side radius 
+        if (components.Length > 0)
+        {
+            foreach (TankComponent component in components)
+            {
+                float distance = Vector3.Distance(hitPos + (forwardDir * ammoType.fuzeDelay), component.gameObject.transform.position);
+                float totalRadius = ammoType.explosionRadius + component.radius;
+                if (distance < totalRadius)
+                {
+                    //explosion is inside radius
+                    float damageMultiply = 1 - (distance / component.radius);
+                    component.TakeDamage(ammoType.damage * damageMultiply);
+                }
             }
-        }*/
+        }
     }
-    
-    public void TakeDamageToMainTank(float damage){
-        if(damage > 0f){
+
+    public void TakeDamageToMainTank(float damage)
+    {
+        if (damage > 0f)
+        {
             //max HP is always 10f
-            Hp = Mathf.Clamp(Hp-damage,0f,10f);
-            if(Hp <= 0f){
+            Hp = Mathf.Clamp(Hp - damage, 0f, 10f);
+            if (Hp <= 0f)
+            {
                 DestroyTank();
             }
         }
     }
-    
-    public void DestroyTank(){
+
+    public void DestroyTank()
+    {
         Destroy(gameObject);
     }
-    
+
     public virtual void WhenCantPenerated()
     {
-        Debug.LogWarning("Shocked : " + shockedDuration + " / 0.3f" );
+        Debug.LogWarning("Shocked : " + shockedDuration + " / 0.3f");
         shockedDuration += 0.3f;
     }
     // Update is called once per frame

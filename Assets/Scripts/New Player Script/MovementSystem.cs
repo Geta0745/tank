@@ -13,6 +13,7 @@ public class MovementSystem : MonoBehaviour
     [SerializeField] private float currentSpeed;
     private Rigidbody rb;
     [SerializeField] private Vector2 movement;
+    [SerializeField] float detectGroundDistance = 1f;
     public bool moveable = true;
     private void Start()
     {
@@ -25,16 +26,17 @@ public class MovementSystem : MonoBehaviour
     */
     private void Update()
     {
+        bool groundHit = Physics.Raycast(transform.position,-transform.up,detectGroundDistance);
         // Accelerate or decelerate based on input
-        if (movement.y > 0 && moveable)
+        if (movement.y > 0 && moveable && groundHit)
         {
             currentSpeed = Mathf.Lerp(currentSpeed, speed, acceleration * Mathf.Abs(movement.y));
         }
-        else if (movement.y == 0 || !moveable)
+        else if (movement.y == 0 || !moveable || !groundHit)
         {
             currentSpeed = Mathf.Lerp(currentSpeed, 0f, deceleration);
         }
-        else if (movement.y < 0 && moveable)
+        else if (movement.y < 0 && moveable && groundHit)
         {
             currentSpeed = Mathf.Lerp(currentSpeed, -backwardSpeed, deceleration * Mathf.Abs(movement.y));
         }
@@ -43,10 +45,11 @@ public class MovementSystem : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Debug.DrawLine(transform.position,transform.position-transform.up* detectGroundDistance);
         Vector3 moveDir = transform.forward * currentSpeed * Time.deltaTime;
         Quaternion rotation = Quaternion.Euler(0f, movement.x * rotationSpeed * Time.deltaTime, 0f);
         rb.MovePosition(rb.position + moveDir);
-        if (moveable)
+        if (moveable && Physics.Raycast(transform.position,-transform.up,detectGroundDistance))
         {
             rb.MoveRotation(rb.rotation * rotation);
         }
