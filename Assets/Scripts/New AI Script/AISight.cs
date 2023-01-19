@@ -14,11 +14,11 @@ public class AISight : MonoBehaviour
     RaycastHit hit;
     [SerializeField] float fireAngle = 5f;
     public bool enableGizmos = false;
-    TurretSystem turretmaster;
+    TurretSystem turretMaster;
     private void Start()
     {
         ai = GetComponent<AIMain>();
-        turretMaster = Getcomponent<TurretSystem>();
+        turretMaster = GetComponent<TurretSystem>();
     }
     void Update()
     {

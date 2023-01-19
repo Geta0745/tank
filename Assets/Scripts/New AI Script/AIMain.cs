@@ -9,7 +9,7 @@ public class AIMain : MonoBehaviour
     [Header("Master Movement And Turret Controller"),SerializeField,HideInInspector]
     MovementSystem movementMaster;
     [Tooltip("Turret Movement Controller Script"),HideInInspector]
-    TurretSystem turretMaster;
+    public TurretSystem turretMaster;
     [Tooltip("Target Transform that will be the Ai destination if target = null Ai will random path")]
     public Transform target;
     private NavMeshPath path;
@@ -92,7 +92,8 @@ public class AIMain : MonoBehaviour
                 movementMaster.SetMovement(movement);
                 if(target != null){
                     if(target.gameObject.GetComponent<Rigidbody>() != null){
-                        turretMaster.SetTarget(target.position + (target.rigidbody.velocity * predictionFactor));
+                        Rigidbody target_rb = target.gameObject.GetComponent<Rigidbody>();
+                        turretMaster.SetTarget(target.position + (target_rb.velocity * predictionFactor));
                     }else{
                         turretMaster.SetTarget(target.position);
                     } 

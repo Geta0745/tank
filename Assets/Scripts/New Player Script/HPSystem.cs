@@ -72,7 +72,7 @@ public class HPSystem : MonoBehaviour
                 {
                     rb.AddForceAtPosition(transform.up * 1f, hitPos, ForceMode.VelocityChange);
                 }
-                WhenPentrated(relativeArmor - armorPenerationPoint,forwardDir,hitPos);
+                WhenPentrated(relativeArmor - armorPenerationPoint,forwardDir,ammoType,hitPos);
             }
         }
     }
