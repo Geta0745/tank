@@ -11,7 +11,6 @@ public class HPSystem : MonoBehaviour
     [SerializeField] float shockedMultiply = 20f; // shocked += 20f / remainArmorPeneration (example 20f)=1f
     Rigidbody rb;
     float Hp = 10f;
-    [SerializeField] TankComponent[] components;
     // Start is called before the first frame update
     void Start()
     {
@@ -88,20 +87,7 @@ public class HPSystem : MonoBehaviour
         shockedDuration += 0.2f;
         shockedDuration += shockedMultiply / Mathf.Abs(remaineArmorPenerate);
         //foreach for damage component
-        if (components.Length > 0)
-        {
-            foreach (TankComponent component in components)
-            {
-                float distance = Vector3.Distance(hitPos + (forwardDir * ammoType.fuzeDelay), component.gameObject.transform.position);
-                float totalRadius = ammoType.explosionRadius + component.radius;
-                if (distance < totalRadius)
-                {
-                    //explosion is inside radius
-                    float damageMultiply = 1 - (distance / component.radius);
-                    component.TakeDamage(ammoType.damage * damageMultiply);
-                }
-            }
-        }
+        TakeDamageToMainTank(ammoType.damage);
     }
 
     public void TakeDamageToMainTank(float damage)

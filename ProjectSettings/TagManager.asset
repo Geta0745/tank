@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - friendly
+  - enemy
   layers:
   - Default
   - TransparentFX
@@ -17,9 +19,9 @@ TagManager:
   - soviet projectile
   - german projectile
   - Obstacle
-  - 
-  - 
-  - 
+  - friendly
+  - enemy
+  - none obstacle
   - 
   - 
   - 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(MovementSystem)),RequireComponent(typeof(TurretSystem)),RequireComponent(typeof(AISight))]
+[RequireComponent(typeof(MovementSystem)),RequireComponent(typeof(TurretSystem))]
 public class AIMain : MonoBehaviour
 {
     [Header("Master Movement And Turret Controller"),SerializeField,HideInInspector]
@@ -129,10 +129,10 @@ public class AIMain : MonoBehaviour
             {
                 NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
             }
-            else
+            /*else
             {
                 NavMesh.CalculatePath(transform.position, RandomPositionOnNavmesh(), NavMesh.AllAreas, path);
-            }
+            }*/
         }
         else
         {

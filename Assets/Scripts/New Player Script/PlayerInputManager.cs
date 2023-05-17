@@ -14,22 +14,27 @@ public class PlayerInputManager : MonoBehaviour
     private InputAction move;
     private InputAction look;
     private InputAction fire;
-    private InputAction zoom;
+    private InputAction aim;
     public LayerMask aimMask;
+    public CameraController camcontroller;
     // Start is called before the first frame update
     private void Awake() {
         PlayerControls = new PlayerControl();
-        cam = GameObject.FindObjectOfType<Camera>();
+        cam = Camera.main;
+        turretMaster = GetComponent<TurretSystem>();
+        movementMaster = GetComponent<MovementSystem>();
     }
 
     private void OnEnable() {
         move = PlayerControls.Player.Move;
         look = PlayerControls.Player.Look;
         fire = PlayerControls.Player.Fire;
-        zoom = PlayerControls.Player.Aim;
+        aim = PlayerControls.Player.Aim;
         move.Enable();
         look.Enable();
         fire.Enable();
+        aim.Enable();
+        aim.performed += ctx => camcontroller.SwitchCam();
         fire.performed += ctx => turretMaster.FireMainGun();
     }
     void Start()
@@ -50,7 +55,6 @@ public class PlayerInputManager : MonoBehaviour
         {
             turretMaster.SetTarget(hit.point);
         }
-
         
     }
 }

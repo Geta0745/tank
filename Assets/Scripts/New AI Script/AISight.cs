@@ -6,11 +6,10 @@ using UnityEngine;
 public class AISight : MonoBehaviour
 {
     // The range of the line of sight
-    public float range = 100f;
+
     [SerializeField] AIMain ai;
     // The layer mask of objects that should be considered for line of sight
-    public LayerMask layerMask;
-    public string hostileLayer;
+    public LayerMask obstacleLayer;
     RaycastHit hit;
     [SerializeField] float fireAngle = 5f;
     public bool enableGizmos = false;
@@ -24,28 +23,13 @@ public class AISight : MonoBehaviour
     {
         if (ai.target != null)
         {
-            Vector3 direction = ai.target.position - turretMaster.GetTurretPoint();
-            if (Physics.Raycast(turretMaster.GetTurretPoint(), direction, out hit, range, layerMask))
-            {
-                Debug.DrawLine(turretMaster.GetTurretPoint(), hit.point);
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer(hostileLayer))
-                {
-                    ai.targetTracked = true;
-                    float angle = Vector3.Angle(ai.turretMaster.GetTurretTransform().forward, hit.transform.position - transform.position);
-                    if (angle <= fireAngle)
-                    {
-                        ai.turretMaster.FireMainGun();
-                    }
-                }
-                else
-                {
-                    ai.targetTracked = false;
+            float Angle = Vector3.Angle(turretMaster.GetTurretPoint().forward,ai.target.position - turretMaster.GetTurretPoint().position);
+            if(Angle <= fireAngle){
+                if(!Physics.Raycast(turretMaster.GetMuzzlePoint().position,turretMaster.GetMuzzlePoint().forward,Vector3.Distance(turretMaster.GetMuzzlePoint().position,ai.target.position),obstacleLayer)){
+                    turretMaster.FireMainGun();
                 }
             }
-            else
-            {
-                ai.targetTracked = false;
-            }
+            Debug.Log(Angle);
         }
     }
 
@@ -54,7 +38,7 @@ public class AISight : MonoBehaviour
         if (enableGizmos)
         {
             Gizmos.color = ai.targetTracked ? Color.green : Color.red;
-            Gizmos.DrawWireSphere(transform.position, range);
+            Gizmos.DrawWireSphere(transform.position, Vector3.Distance(turretMaster.GetMuzzlePoint().position,ai.target.position));
         }
 
     }

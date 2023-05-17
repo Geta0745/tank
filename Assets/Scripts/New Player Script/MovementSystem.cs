@@ -40,7 +40,6 @@ public class MovementSystem : MonoBehaviour
         {
             currentSpeed = Mathf.Lerp(currentSpeed, -backwardSpeed, deceleration * Mathf.Abs(movement.y));
         }
-
     }
 
     private void FixedUpdate()
@@ -71,7 +70,7 @@ public class MovementSystem : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision other) {
-        if(other.gameObject.layer != LayerMask.NameToLayer("german projectile") && other.gameObject.layer != LayerMask.NameToLayer("soviet projectile")){
+        if(other.gameObject.layer != LayerMask.NameToLayer("german projectile") && other.gameObject.layer != LayerMask.NameToLayer("soviet projectile") && other.gameObject.layer != LayerMask.NameToLayer("none obstacle")){
             currentSpeed = 0f;
         }
     }

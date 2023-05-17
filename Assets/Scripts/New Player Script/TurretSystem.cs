@@ -12,6 +12,7 @@ public class TurretSystem : MonoBehaviour
     [SerializeField] private float coolDown = 0f; // The time when the tank can fire again
 
     [SerializeField] Vector3 target;
+    public TankBullet currentProjectile;
     public bool moveable = true;
     Rigidbody rb;
     // Update is called once per frame
@@ -52,12 +53,12 @@ public class TurretSystem : MonoBehaviour
         {
             if (bulletPref != null && muzzlePoint != null)
             {
-                TankBullet bullet = Instantiate(bulletPref,muzzlePoint.position,muzzlePoint.rotation).GetComponent<TankBullet>();
+                currentProjectile = Instantiate(bulletPref,muzzlePoint.position,muzzlePoint.rotation).GetComponent<TankBullet>();
                 // Destroy the bullet after 10 seconds
                 if(rb != null){
                     rb.AddForceAtPosition(transform.up *0.5f,muzzlePoint.position,ForceMode.VelocityChange);
                 }
-                Destroy(bullet.gameObject, 10f);
+                Destroy(currentProjectile.gameObject, 10f);
             }
             coolDown = fireRate;
             //Debug.Log("Fired Main Gun!");
@@ -74,11 +75,11 @@ public class TurretSystem : MonoBehaviour
         target = transform.position + transform.forward;
     }
     
-    public Vector3 GetTurretPoint(){
-        return turret.position;
+    public Transform GetTurretPoint(){
+        return turret;
     }
     
-    public Vector3 GetMuzzlePoint(){
-        return muzzlePoint.position;
+    public Transform GetMuzzlePoint(){
+        return muzzlePoint;
     }
 }
