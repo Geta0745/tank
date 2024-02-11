@@ -5,17 +5,17 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class MovementSystem : MonoBehaviour
 {
-    [SerializeField] private float speed = 8f;
-    [SerializeField] private float backwardSpeed = 4f;
-    [SerializeField] private float rotationSpeed = 20f;
-    [SerializeField] private float acceleration = .0008f;
-    [SerializeField] private float deceleration = .005f;
-    [SerializeField] private float currentSpeed;
-    private Rigidbody rb;
-    [SerializeField] private Vector2 movement;
-    [SerializeField] float detectGroundDistance = 1f;
+    [SerializeField] protected float speed = 8f;
+    [SerializeField] protected float backwardSpeed = 4f;
+    [SerializeField] protected float rotationSpeed = 20f;
+    [SerializeField] protected float acceleration = .0008f;
+    [SerializeField] protected float deceleration = .005f;
+    [SerializeField] protected float currentSpeed;
+    protected Rigidbody rb;
+    [SerializeField] protected Vector2 movement;
+    [SerializeField] protected float detectGroundDistance = 1f;
     public bool moveable = true;
-    private void Start()
+    protected virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
@@ -24,7 +24,7 @@ public class MovementSystem : MonoBehaviour
     movement.y = move forward and backward
     movement.x = turn tank
     */
-    private void Update()
+    protected virtual void Update()
     {
         bool groundHit = Physics.Raycast(transform.position,-transform.up,detectGroundDistance);
         // Accelerate or decelerate based on input
@@ -42,7 +42,7 @@ public class MovementSystem : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Debug.DrawLine(transform.position,transform.position-transform.up* detectGroundDistance);
         Vector3 moveDir = transform.forward * currentSpeed * Time.deltaTime;
@@ -69,7 +69,11 @@ public class MovementSystem : MonoBehaviour
         return currentSpeed;
     }
 
-    private void OnCollisionEnter(Collision other) {
+    public float GetMaxSpeed(){
+        return speed;
+    }
+
+    protected virtual void OnCollisionEnter(Collision other) {
         if(other.gameObject.layer != LayerMask.NameToLayer("german projectile") && other.gameObject.layer != LayerMask.NameToLayer("soviet projectile") && other.gameObject.layer != LayerMask.NameToLayer("none obstacle")){
             currentSpeed = 0f;
         }

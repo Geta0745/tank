@@ -6,6 +6,7 @@ TagManager:
   tags:
   - friendly
   - enemy
+  - ground
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - friendly
   - enemy
   - none obstacle
-  - 
+  - track
   - 
   - 
   - 

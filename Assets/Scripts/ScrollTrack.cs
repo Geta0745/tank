@@ -9,9 +9,10 @@ public class ScrollTrack : MonoBehaviour
     Material RTrack;
     [SerializeField] MeshRenderer LtrackRenderer;
     [SerializeField] MeshRenderer RtrackRenderer;
-    [SerializeField] float scrollSpeed = 0.5f;
+    [SerializeField] float ScrollSpeedAdjustment = 3f;
     MovementSystem movementMaster;
-    public float movement;
+    [ReadOnly] public float lastMoveDirection = 0f;
+    [ReadOnly] public float trackMovement;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,8 +34,11 @@ public class ScrollTrack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement = movementMaster.GetMovement().y;
-        LTrack.SetFloat("_Speed",scrollSpeed * movement);
-        RTrack.SetFloat("_Speed",scrollSpeed * movement);
+        if(movementMaster.GetMovement().y != 0){
+            lastMoveDirection = movementMaster.GetMovement().y;
+        }
+        trackMovement = Mathf.Abs(movementMaster.GetCurrentSpeed()/Mathf.Abs(movementMaster.GetMaxSpeed())) * lastMoveDirection;
+        LTrack.SetFloat("_Speed",trackMovement);
+        RTrack.SetFloat("_Speed",trackMovement);
     }
 }
